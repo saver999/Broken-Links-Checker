@@ -29,7 +29,7 @@ name: Broken Links Checker
 on:
   push:
     branches:
-      - master
+      - main
   schedule:
      - cron: '0 0 1 * *'
 
@@ -82,7 +82,7 @@ jobs:
       if: failure()
 ```
 
-This configuration sets up the workflow to run on pushes to the `master` branch and also schedules it to run on the 1st day of every month. It checks for broken links in your README.md file and creates an issue with the broken links if any are found.
+This configuration sets up the workflow to run on pushes to the `main` branch and also schedules it to run on the 1st day of every month. It checks for broken links in your README.md file and creates an issue with the broken links if any are found.
 
 Make sure to customize the `ISSUE_TEMPLATE.md` file according to the content you want for the created issues.
 

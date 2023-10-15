@@ -90,4 +90,4 @@ Now, every time this workflow runs, it will check for broken links in your READM
 
 ## Workflow Execution
 - ![link](workflow_images/Link.png)
-- ![issue](worflow_images/issue.png)
+- ![issue](workflow_images/issue.png)

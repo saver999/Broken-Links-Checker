@@ -2,6 +2,7 @@
 
 This GitHub Actions workflow checks the links in your README.md file and creates an issue if broken links are found.
 
+
 ## How it works
 
 1. The workflow is triggered on every push to the `master` branch and runs on a monthly schedule on the 1st day of the month.

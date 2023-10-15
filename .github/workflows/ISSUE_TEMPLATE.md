@@ -1,6 +1,6 @@
 ---
 title: Sites Containing Broken Links
-labels: housekeeping
+labels: documentation
 assignees: ''
 ---
 

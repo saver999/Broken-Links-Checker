@@ -34,7 +34,6 @@ jobs:
               if ! curl -IsSk "$link" > /dev/null; then
                 BROKEN_LINKS+=("$link")
               fi
-          fi
           done
           
           if [ ${#BROKEN_LINKS[@]} -gt 0 ]; then

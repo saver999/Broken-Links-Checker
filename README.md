@@ -88,5 +88,6 @@ Make sure to customize the `ISSUE_TEMPLATE.md` file according to the content you
 
 Now, every time this workflow runs, it will check for broken links in your README.md and create issues in your repository if any are found.
 
-[Github](https://github.com/) link funzionante 
-[Broken](http://dffdifdidf.com/) link non funzionante  
+## Workflow Execution
+ ![link](workflow_images/Link.png)
+ ![issue](workflow_images/issue.png)

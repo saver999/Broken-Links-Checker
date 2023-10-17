@@ -44,29 +44,12 @@ jobs:
            echo "No broken links found"
           fi
 
-      - name: Read issue template file
-        id: read-template
-        run: |
-          ISSUE_TEMPLATE=$(cat ${{ env.ISSUE_TEMPLATE_PATH }})
-          echo "ISSUE_TEMPLATE=$ISSUE_TEMPLATE" >> $GITHUB_ENV
+      - uses: actions/checkout@v3
+        if: failure()
 
-      - name: Create or Update an issue for broken links
-        run: |
-          ISSUE_BODY=$(echo "$ISSUE_TEMPLATE" | sed 's/{{BROKEN_LINKS}}/'"$BROKEN_LINKS"'/g')
-          ISSUE_TITLE="Broken Links Found"
-          ISSUE_NUMBER=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-           "https://api.github.com/repos/${{ github.repository }}/issues?state=open" | \
-            jq -r --arg TITLE "$ISSUE_TITLE" '.[] | select(.title == $TITLE) | .number')
-                
-          if [ -z "$ISSUE_NUMBER" ]; then
-            echo "Creating a new issue..."
-            curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -d '{"title":"'"$ISSUE_TITLE"'","body":"'"$ISSUE_BODY"'"}' \
-              "https://api.github.com/repos/${{ github.repository }}/issues"
-          else
-            echo "Updating existing issue #$ISSUE_NUMBER..."
-            curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-               -d '{"body":"'"$ISSUE_BODY"'"}' \
-               "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUMBER"
-          fi
+      - uses: JasonEtco/create-an-issue@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          filename: ${{ env.ISSUE_TEMPLATE }}
         if: failure()

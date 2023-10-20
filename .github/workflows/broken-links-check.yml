@@ -42,11 +42,11 @@ jobs:
           else
            echo "No broken links found"
           fi
-         # Converti l'array in una stringa separata da virgole
-          BROKEN_LINKS_STRING=$(IFS=','; echo "${BROKEN_LINKS[*]}")
-  
-         # Passa la stringa come variabile d'ambiente
-          echo "BROKEN_LINKS=$BROKEN_LINKS_STRING" >> $GITHUB_ENV
+          # Converti l'array in una stringa separata da virgole
+           BROKEN_LINKS_STRING=$(IFS=','; echo "${BROKEN_LINKS[*]}")
+   
+          # Passa la stringa come variabile d'ambiente
+           echo "BROKEN_LINKS=$BROKEN_LINKS_STRING" >> $GITHUB_ENV
 
       - uses: actions/checkout@v3
         if: failure()

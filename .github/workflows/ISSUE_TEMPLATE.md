@@ -8,4 +8,3 @@ List of problematic links:
 {% for link in env.BROKEN_LINKS %}
 - {{ link }}
 {% endfor %}
-

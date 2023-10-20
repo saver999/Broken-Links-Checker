@@ -39,7 +39,6 @@ jobs:
           if [ ${#BROKEN_LINKS[@]} -gt 0 ]; then
            echo "Broken links found: ${BROKEN_LINKS[@]}" >&2
            echo "Broken links found, failing the workflow" >&2
-           export BROKEN_LINKS=$(IFS=','; echo "${BROKEN_LINKS[*]}")
            exit 1
           else
            echo "No broken links found"
@@ -51,6 +50,7 @@ jobs:
       - uses: JasonEtco/create-an-issue@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BROKEN_LINKS: ${{ env.BROKEN_LINKS }}
         with:
           filename: ${{ env.ISSUE_TEMPLATE }}
         if: failure()

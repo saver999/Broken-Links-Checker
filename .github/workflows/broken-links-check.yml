@@ -35,6 +35,9 @@ jobs:
                 BROKEN_LINKS+=("$link")
               fi
           done
+          # Format BROKEN_LINKS as a newline-separated string
+          IFS=$'\n'
+          export BROKEN_LINKS="${BROKEN_LINKS[*]}"
           
           if [ ${#BROKEN_LINKS[@]} -gt 0 ]; then
            echo "Broken links found: ${BROKEN_LINKS[@]}" >&2

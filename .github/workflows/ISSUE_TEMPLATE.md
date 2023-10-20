@@ -5,5 +5,5 @@ assignees: ''
 ---
 
 List of problematic links:
-{{ BROKEN_LINKS }}
+${BROKEN_LINKS[@]}
 

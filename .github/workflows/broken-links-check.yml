@@ -35,9 +35,6 @@ jobs:
                 BROKEN_LINKS+=("$link")
               fi
           done
-          # Format BROKEN_LINKS as a newline-separated string
-          IFS=$'\n'
-          export BROKEN_LINKS="${BROKEN_LINKS[*]}"
           
           if [ ${#BROKEN_LINKS[@]} -gt 0 ]; then
            echo "Broken links found: ${BROKEN_LINKS[@]}" >&2
@@ -46,14 +43,16 @@ jobs:
           else
            echo "No broken links found"
           fi
-
+         # Creare una stringa separata da virgole dei link problematici
+         BROKEN_LINKS_STRING=$(IFS=','; echo "${BROKEN_LINKS[*]}")
+         # Passare BROKEN_LINKS_STRING come variabile d'ambiente
+         echo "BROKEN_LINKS=$BROKEN_LINKS_STRING" >> $GITHUB_ENV
       - uses: actions/checkout@v3
         if: failure()
 
       - uses: JasonEtco/create-an-issue@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BROKEN_LINKS: ${{ env.BROKEN_LINKS }}
         with:
           filename: ${{ env.ISSUE_TEMPLATE }}
         if: failure()

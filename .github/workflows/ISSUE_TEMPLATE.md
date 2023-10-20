@@ -5,5 +5,7 @@ assignees: ''
 ---
 
 List of problematic links:
-${BROKEN_LINKS}
+{% for link in env.BROKEN_LINKS %}
+- {{ link }}
+{% endfor %}
 

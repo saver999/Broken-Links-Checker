@@ -26,7 +26,7 @@ jobs:
       - name: Run Broken Links Checker
         run: |
           # Split the list of links into an array separated by commas
-          IFS=',' read -ra LINKS <<< "$WEBSITE_URL"
+          IFS=',' read -ra LINKS <<< $WEBSITE_URL
           BROKEN_LINKS=()
           
           # Scan the links and verify if they are reachable
@@ -39,6 +39,7 @@ jobs:
           if [ ${#BROKEN_LINKS[@]} -gt 0 ]; then
            echo "Broken links found: ${BROKEN_LINKS[@]}" >&2
            echo "Broken links found, failing the workflow" >&2
+           export BROKEN_LINKS=$(IFS=','; echo "${BROKEN_LINKS[*]}")
            exit 1
           else
            echo "No broken links found"

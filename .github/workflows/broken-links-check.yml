@@ -50,8 +50,11 @@ jobs:
           # Converte l'array BROKEN_LINKS in una stringa separata da virgole
           BROKEN_LINKS_STRING=$(IFS=','; echo "${BROKEN_LINKS[*]}")
           
-          # Crea una stringa JSON con la lista dei link rotti
-          json_data="{\"title\":\"Broken Links Found\",\"body\":\"Broken links found: $BROKEN_LINKS_STRING\"}"
+          # Crea una stringa con i link rotti formattati come elenco puntato
+          formatted_links=$(echo "$BROKEN_LINKS_STRING" | sed 's/,/\\n- /g')
+          
+          # Crea una stringa JSON con il corpo dell'issue
+          json_data="{\"title\":\"Broken Links Found\",\"body\":\"Broken links found:\\n- $formatted_links\"}"
           
           # Invia una richiesta POST per creare un problema su GitHub
           curl -X POST \

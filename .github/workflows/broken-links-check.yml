@@ -55,4 +55,4 @@ jobs:
           -H "Accept: application/vnd.github.v3+json" \
           -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
           https://api.github.com/repos/${{ github.repository }}/issues \
-          -d "{\"title\":\"Broken Links Found\",\"body\":\"Broken links found: ${BROKEN_LINKS[@]}"\"}"
+          -d "{\"title\":\"Broken Links Found\",\"body\":\"Broken links found: ${BROKEN_LINKS[@]}\"}"

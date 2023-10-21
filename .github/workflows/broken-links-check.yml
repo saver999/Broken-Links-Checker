@@ -47,13 +47,15 @@ jobs:
 
       - name: Set BROKEN_LINKS as Environment Variable
         if: failure()
-        run: echo "${BROKEN_LINKS[@]}" > broken_links.json
+        run: |
+          # Crea un file temporaneo per memorizzare i link rotti
+          echo "${BROKEN_LINKS[@]}" > broken_links.txt
 
       - name: Create Issue for Broken Links
         if: failure()
         run: |
-          # Leggi i link rotti dal file JSON
-          BROKEN_LINKS=$(cat broken_links.json)
+          # Leggi i link rotti dal file temporaneo
+          BROKEN_LINKS=$(cat broken_links.txt)
 
           # Crea una stringa con i link rotti formattati come elenco puntato
           formatted_links=$(printf "\\n- %s" "$BROKEN_LINKS")
@@ -67,6 +69,7 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -d "$json_data" \
             https://api.github.com/repos/${{ github.repository }}/issues
+      
       
       
       

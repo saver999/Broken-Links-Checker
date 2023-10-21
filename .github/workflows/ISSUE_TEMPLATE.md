@@ -5,4 +5,4 @@ assignees: ''
 ---
 
 List of problematic links:
--{{env.BROKEN_LINKS}}
+-{{env.BROKEN_LINKS[1]}}

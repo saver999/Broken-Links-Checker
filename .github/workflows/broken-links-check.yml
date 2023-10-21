@@ -42,7 +42,8 @@ jobs:
           # Rimuovi la virgola iniziale se ci sono link non raggiungibili
         if [ ${#BROKEN_LINKS[@]} -gt 0 ]; then
           echo "Broken links found: ${BROKEN_LINKS[@]}" >&2
-          echo "BROKEN_LINKS=$BROKEN_LINKS" >> $GITHUB_ENV
+          BROKEN_LINKS_STRING=$(echo "${BROKEN_LINKS[@]}" | tr '\n' ',')
+          echo "BROKEN_LINKS=$BROKEN_LINKS_STRING" >> $GITHUB_ENV
           echo "Broken links found:  ${BROKEN_LINKS[@]}"
           echo "Broken links found, failing the workflow"
           exit 1

@@ -47,13 +47,13 @@ jobs:
 
       - name: Set BROKEN_LINKS as Environment Variable
         if: failure()
-        run: echo "BROKEN_LINKS=${{ toJson(BROKEN_LINKS) }}" >> $GITHUB_ENV
+        run: echo "BROKEN_LINKS_JSON=$(echo '${BROKEN_LINKS[@]}' | jq -c -R .)" >> $GITHUB_ENV
 
       - name: Create Issue for Broken Links
         if: failure()
         run: |
           # Converte la variabile d'ambiente JSON in un array di Bash
-          BROKEN_LINKS_ARRAY=($(echo "$BROKEN_LINKS" | jq -r '.[]'))
+          BROKEN_LINKS_ARRAY=($(echo "$BROKEN_LINKS_JSON" | jq -r '. | fromjson | .[]'))
 
           # Crea una stringa con i link rotti formattati come elenco puntato
           formatted_links=$(printf "\\n- %s" "${BROKEN_LINKS_ARRAY[@]}")
@@ -67,4 +67,5 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             -d "$json_data" \
             https://api.github.com/repos/${{ github.repository }}/issues
+      
       

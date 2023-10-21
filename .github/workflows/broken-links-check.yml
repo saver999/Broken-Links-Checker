@@ -32,14 +32,13 @@ jobs:
         # Scan the links and verify if they are reachable
         for link in "${LINKS[@]}"; do
           if [[ $link =~ ^(http|https):// ]]; then
-            # Se il link inizia con "http://" o "https://", verifica se è raggiungibile
+            # Scan the links and verify if they are reachable
             if ! curl -IsSk "$link" > /dev/null; then
               BROKEN_LINKS+=("$link")
             fi
           fi
         done
 
-          # Rimuovi la virgola iniziale se ci sono link non raggiungibili
         if [ ${#BROKEN_LINKS[@]} -gt 0 ]; then
           echo "Broken links found: ${BROKEN_LINKS[@]}" >&2
           BROKEN_LINKS_STRING=$(echo "${BROKEN_LINKS[@]}" | tr '\n' ';')
@@ -51,14 +50,17 @@ jobs:
           echo "No broken links found"
         fi
 
-  
-
     - uses: actions/checkout@v3
       if: failure()
 
-    - uses: JasonEtco/create-an-issue@v2
+    - name: Create or update issue
+      uses: peter-evans/create-or-update-issue@v1
+      with:
+        title: Sites Containing Broken Links
+        body: |
+         List of problematic links:
+         - ${{ env.BROKEN_LINKS }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        filename: ${{ env.ISSUE_TEMPLATE }}
-      if: failure()
+        
+

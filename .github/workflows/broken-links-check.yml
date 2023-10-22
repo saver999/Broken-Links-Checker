@@ -42,11 +42,11 @@ jobs:
           echo "Broken links found:  ${BROKEN_LINKS[@]}"
           echo "Broken links found, failing the workflow"
           existing_issue=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }} https://api.github.com/repos/${{ github.repository }}/issues?state=all&labels=bug" | jq '.[] | select(.title == "Sites Containing Broken Links")')
-        if [ -n "$existing_issue" ]; then
-          # Issue già presente, aggiorna l'issue esistente
-          echo "Existing issue found. Updating the existing issue."
-          issue_number=$(echo "$existing_issue" | jq -r '.number')
-          exit 1
+          if [ -n "$existing_issue" ]; then
+           # Issue già presente, aggiorna l'issue esistente
+           echo "Existing issue found. Updating the existing issue."
+           issue_number=$(echo "$existing_issue" | jq -r '.number')
+        exit 1
         else
           echo "No broken links found"
         fi

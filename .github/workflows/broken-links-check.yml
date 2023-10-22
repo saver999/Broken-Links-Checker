@@ -1,10 +1,6 @@
 name: Broken Links Checker
-on:
-  push:
-    branches:
-      - [push]
-  schedule:
-     - cron: '0 0 1 * *'
+on: 
+  [push]
 env:
   ISSUE_TEMPLATE: ".github/workflows/ISSUE_TEMPLATE.md"
  

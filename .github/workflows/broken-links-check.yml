@@ -2,7 +2,7 @@ name: Broken Links Checker
 on:
   push:
     branches:
-      - main
+      - [push]
   schedule:
      - cron: '0 0 1 * *'
 env:
@@ -50,17 +50,14 @@ jobs:
           echo "No broken links found"
         fi
 
+  
+
     - uses: actions/checkout@v3
       if: failure()
 
-    - name: Create or update issue
-      uses: peter-evans/create-or-update-issue@v1
-      with:
-        title: Sites Containing Broken Links
-        body: |
-         List of problematic links:
-         - ${{ env.BROKEN_LINKS }}
+    - uses: JasonEtco/create-an-issue@v2
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        
-
+      with:
+        filename: ${{ env.ISSUE_TEMPLATE }}
+      if: failure()

@@ -41,12 +41,14 @@ jobs:
           echo "BROKEN_LINKS=$BROKEN_LINKS_STRING" >> $GITHUB_ENV
           echo "Broken links found:  ${BROKEN_LINKS[@]}"
           echo "Broken links found, failing the workflow"
-          existing_issue=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }} https://api.github.com/repos/${{ github.repository }}/issues?state=all&labels=bug" | jq '.[] | select(.title == "Sites Containing Broken Links")')
-          if [ -n "$existing_issue" ]; then
-           # Issue già presente, aggiorna l'issue esistente
-           echo "Existing issue found. Updating the existing issue."
-           issue_number=$(echo "$existing_issue" | jq -r '.number')
-        exit 1
+          ISSUE_NAME="Sites Containing Broken Links"  # Sostituisci con il nome dell'issue che vuoi verificare
+          ISSUE_NUMBER=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}/issues?q=$ISSUE_NAME" | jq -r '.items[0].number')
+          echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> $GITHUB_ENV
+          ISSUE_LINKS=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}/issues/$ISSUE_NUMBER" | jq -r '.body' | grep -oP '(?<=\()[^\)]+' | paste -sd ,)
+          if [ "$ISSUE_LINKS" == "$BROKEN_LINKS" ]; then
+           echo "Links in issue #$ISSUE_NUMBER match the links in README.md"
+          else
+          exit 1
         else
           echo "No broken links found"
         fi

@@ -41,12 +41,13 @@ jobs:
           echo "BROKEN_LINKS=$BROKEN_LINKS_STRING" >> $GITHUB_ENV
           echo "Broken links found:  ${BROKEN_LINKS[@]}"
           echo "Broken links found, failing the workflow"
+        
           exit 1
         else
           echo "No broken links found"
         fi
 
-  
+     
 
     - uses: actions/checkout@v3
       if: failure()
@@ -57,3 +58,10 @@ jobs:
       with:
         filename: ${{ env.ISSUE_TEMPLATE }}
       if: failure()
+
+
+
+
+
+
+

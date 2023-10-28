@@ -27,59 +27,65 @@ Create a new YAML file, for example, `broken-links-check.yml`, in your `.github/
 ```yaml
 name: Broken Links Checker
 on:
-  push:
-    branches:
-      - main
-  schedule:
-     - cron: '0 0 1 * *'
-
+        [push]
 env:
-  ISSUE_TEMPLATE: ".github/workflows/ISSUE_TEMPLATE.md"
+ ISSUE_TEMPLATE: ".github/workflows/ISSUE_TEMPLATE.md"
+
+ contents: read
+ issues: write
 
 jobs:
-  check:
-    runs-on: ubuntu-latest
+ check:
+  runs-on: ubuntu-latest
 
-    steps:
-    - uses: actions/checkout@v3
-    - name: Get links from README.md
-      id: get-links
-      run: |
-        LINKS=$(grep -oP '\[.*?\]\((http[s]?://[^)]*)\)' README.md | sed -E 's/\[.*\]\(([^)]+)\)/\1/' | paste -sd "," -)
-        echo "WEBSITE_URL=$LINKS" >> $GITHUB_ENV
+  steps:
+   - uses: actions/checkout@v3
+   - name: Get links from README.md
+     id: get-links
+     run: |
+      LINKS=$(sed -nE 's/\[.*\]\((http[s]?:\/\/[^)]*)\)/\1/p' README.md | paste -sd ,)
+      echo "WEBSITE_URL=$LINKS" >> $GITHUB_ENV
 
-    - name: Run Broken Links Checker
-      run: |
-        IFS=',' read -ra LINKS <<< "$WEBSITE_URL"
-        BROKEN_LINKS=""
+   - name: Run Broken Links Checker
+     run: |
+      # Split the list of links into an array separated by commas
+      read -ra LINKS <<< "$WEBSITE_URL"
+      BROKEN_LINKS=()
 
-        for link in "${LINKS[@]}"; do
-          if [[ $link =~ ^(http|https):// ]]; then
-            if ! curl -IsSk "$link" > /dev/null; then
-              BROKEN_LINKS="$BROKEN_LINKS,$link"
-            fi
+      # Scan the links and verify if they are reachable
+      for link in "${LINKS[@]}"; do
+        if [[ $link =~ ^(http|https):// ]]; then
+          # Scan the links and verify if they are reachable
+          if ! curl -IsSk "$link" > /dev/null; then
+            BROKEN_LINKS+=("$link")
           fi
-        done
-
-        if [ -n "$BROKEN_LINKS" ]; then
-          BROKEN_LINKS=$(echo "$BROKEN_LINKS" | cut -c 2-)
-          echo "BROKEN_LINKS=$BROKEN_LINKS" >> $GITHUB_ENV
-          echo "Broken links found: $BROKEN_LINKS"
-          echo "Broken links found, failing the workflow"
-          exit 1
-        else
-          echo "No broken links found"
         fi
+      done
 
-    - uses: actions/checkout@v3
-      if: failure()
+      if [ ${#BROKEN_LINKS[@]} -gt 0 ]; then
+        echo "Broken links found: ${BROKEN_LINKS[@]}" >&2
+        BROKEN_LINKS_STRING=$(echo "${BROKEN_LINKS[@]}" | tr '\n' ';')
+        echo "BROKEN_LINKS=$BROKEN_LINKS_STRING" >> $GITHUB_ENV
+        echo "Broken links found:  ${BROKEN_LINKS[@]}"
+        echo "Broken links found, failing the workflow"
 
-    - uses: JasonEtco/create-an-issue@v2
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        filename: ${{ env.ISSUE_TEMPLATE }}
-      if: failure()
+        exit 1
+      else
+        echo "No broken links found"
+      fi
+
+
+
+   - uses: actions/checkout@v3
+     if: failure()
+
+   - uses: JasonEtco/create-an-issue@v2
+     env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+     with:
+      filename: ${{ env.ISSUE_TEMPLATE }}
+     if: failure()
+
 ```
 
 This configuration sets up the workflow to run on pushes to the `main` branch and also schedules it to run on the 1st day of every month. It checks for broken links in your README.md file and creates an issue with the broken links if any are found.

@@ -19,6 +19,15 @@ jobs:
        LINKS=$(sed -nE 's/\[.*\]\((http[s]?:\/\/[^)]*)\)/\1/p' README.md | paste -sd ,)
        echo "WEBSITE_URL=$LINKS" >> $GITHUB_ENV
       
+
+    - name: Get issue number by name
+      id: get-issue-number
+      run: |
+        ISSUE_NAME="Sites Containing Broken Links"  # Sostituisci con il nome dell'issue che vuoi verificare
+        ISSUE_NUMBER=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}/issues?q=$ISSUE_NAME" | jq -r '.items[0].number')
+        echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> $GITHUB_ENV   
+        echo "Issue number:  ${ISSUE_NUMBER}"
+
     - name: Run Broken Links Checker
       run: |
         # Split the list of links into an array separated by commas
@@ -46,13 +55,7 @@ jobs:
           echo "No broken links found"
         fi
 
-    - name: Get issue number by name
-      id: get-issue-number
-      run: |
-        ISSUE_NAME="Sites Containing Broken Links"  # Sostituisci con il nome dell'issue che vuoi verificare
-        ISSUE_NUMBER=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}/issues?q=$ISSUE_NAME" | jq -r '.items[0].number')
-        echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> $GITHUB_ENV   
-        echo "Issue number:  ${ISSUE_NUMBER}"
+   
 
     - uses: actions/checkout@v3
       if: failure()

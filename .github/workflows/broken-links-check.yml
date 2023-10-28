@@ -41,13 +41,18 @@ jobs:
           echo "BROKEN_LINKS=$BROKEN_LINKS_STRING" >> $GITHUB_ENV
           echo "Broken links found:  ${BROKEN_LINKS[@]}"
           echo "Broken links found, failing the workflow"
-        
           exit 1
         else
           echo "No broken links found"
         fi
 
-     
+    - name: Get issue number by name
+      id: get-issue-number
+      run: |
+        ISSUE_NAME="Sites Containing Broken Links"  # Sostituisci con il nome dell'issue che vuoi verificare
+        ISSUE_NUMBER=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}/issues?q=$ISSUE_NAME" | jq -r '.items[0].number')
+        echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> $GITHUB_ENV   
+        echo "Issue number:  ${ISSUE_NUMBER}"
 
     - uses: actions/checkout@v3
       if: failure()

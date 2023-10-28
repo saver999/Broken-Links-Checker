@@ -24,8 +24,8 @@ jobs:
       id: get-issue-number
       run: |
         ISSUE_NAME="Sites Containing Broken Links"  # Sostituisci con il nome dell'issue che vuoi verificare
-        ISSUE_NUMBER=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}/issues?q=$ISSUE_NAME" | jq -r '.items[0].number')
-        echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> $GITHUB_ENV   
+        ISSUE_NUMBER=$(curl -s -H "Authorization: Bearer $GITHUB_TOKEN" "https://api.github.com/repos/${{ github.repository }}/issues?q=$ISSUE_NAME" | jq -r '.items[] | select(.title == "$ISSUE_NAME") | .number')
+        echo "ISSUE_NUMBER=$ISSUE_NUMBER" >> $GITHUB_ENV
         echo "Issue number:  ${ISSUE_NUMBER}"
 
     - name: Run Broken Links Checker
